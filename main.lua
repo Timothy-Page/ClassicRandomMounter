@@ -14,6 +14,9 @@ local myMounts = {
   ["mySuperSwiftFlyingMounts"] = {}
 }
 
+local myMountsCount = 0
+local myMountsPreviousCount = 0
+
 local function tablelength(T)
     local count = 0
     for _ in pairs(T) do count = count + 1 end
@@ -190,8 +193,18 @@ local function UpdateMyMounts()
       end
     end
   end
+  
+  local numberOfMounts = tablelength(myMounts["myGroundMounts"])
+  numberOfMounts = numberOfMounts + tablelength(myMounts["mySwiftGroundMounts"])
+  numberOfMounts = numberOfMounts + tablelength(myMounts["myFlyingMounts"])
+  numberOfMounts = numberOfMounts + tablelength(myMounts["mySwiftFlyingMounts"])
+  numberOfMounts = numberOfMounts + tablelength(myMounts["mySuperSwiftFlyingMounts"])
+
+  myMountsPreviousCount = myMountsCount
+  myMountsCount = numberOfMounts
 
   if inDebugMode then
+    print("Total Mounts Found: " .. tostring(numberOfMounts))
     PrintMounts()
   end
 end
@@ -217,6 +230,9 @@ local function CRMHandler(parameter)
       print(parameter)
     end
   else
+    if myMountsCount ~= myMountsCount then --used to ensure that all mounts are found
+      InitialStartup()
+    end
     local groundMount, flyingMount = GetRandomMounts()
     if IsMounted() == false then
       crm_wait(0.1, UpdateMacro, groundMount, flyingMount)
@@ -230,7 +246,7 @@ end
 
 -- Initilize addon when entering world
 local EnterWorldFrame = CreateFrame("Frame")
-EnterWorldFrame:RegisterEvent("ADDON_LOADED")
+EnterWorldFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 EnterWorldFrame:SetScript("OnEvent", InitialStartup)
 
 -- Register slash commands
