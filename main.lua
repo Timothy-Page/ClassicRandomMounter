@@ -230,7 +230,7 @@ local function CRMHandler(parameter)
       print(parameter)
     end
   else
-    if myMountsCount ~= myMountsCount then --used to ensure that all mounts are found
+    if myMountsCount ~= myMountsPreviousCount then --used to ensure that all mounts are found
       InitialStartup()
     end
     local groundMount, flyingMount = GetRandomMounts()
